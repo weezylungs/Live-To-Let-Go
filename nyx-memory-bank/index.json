@@ -1,0 +1,55 @@
+{
+    "repository": "Live-To-Let-Go",
+    "module": "NYX Memory Bank",
+    "version": "1.0",
+    "description": "Index file for NYX Memory Bank tracking all security findings, proofs of exploit (PoEs), and remediations.",
+    "created": "2025-10-21T00:00:00Z",
+    "last_updated": "2025-10-21T08:00:00Z",
+    "findings": [
+        {
+            "id": "FND-20251021-0001",
+            "severity": "P0",
+            "evidence_tier": "TIER_2",
+            "status": "open",
+            "component": "nyx-targets/audit_triad.py",
+            "taxonomy_class": "crypto_failure",
+            "created": "2025-10-21T07:30:00Z"
+        }
+    ],
+    "proofs": [
+        {
+            "id": "POE-20251021-0001",
+            "finding_id": "FND-20251021-0001",
+            "type": "specification",
+            "repro_rate": "unexecuted — spec only"
+        }
+    ],
+    "remediations": [
+        {
+            "id": "REM-20251021-0001",
+            "finding_id": "FND-20251021-0001",
+            "type": "atomic_pattern",
+            "status": "proposed"
+        }
+    ],
+    "logs": [],
+    "taxonomy": [
+        {
+            "class": "race_condition",
+            "description": "Concurrency and timing vulnerabilities."
+        },
+        {
+            "class": "crypto_failure",
+            "description": "Improper use or validation of cryptographic primitives.",
+            "instances": ["FND-20251021-0001"]
+        },
+        {
+            "class": "input_validation",
+            "description": "Insufficient sanitisation or validation of user input."
+        }
+    ],
+    "integrity": {
+        "hash_chain": "pending",
+        "last_commit_signed": false
+    }
+}
