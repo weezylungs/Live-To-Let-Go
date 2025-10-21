@@ -1,0 +1,32 @@
+{
+  "id": "FND-20251021-0001",
+  "severity": "P0",
+  "evidence_tier": "TIER_2",
+  "component": "nyx-targets/audit_triad.py:perform_audit():237-248",
+  "description": "Sign-then-mutate hazard around ledger persistence and signature generation. Ledger bytes are written and signed, then metadata is appended and the file is rewritten without a guaranteed re-sign of the exact same bytes. This pattern risks a mismatch between signed bytes and final on-disk bytes and invites TOCTOU if writes and signing are non-atomic.",
+  "impact": "Audit integrity can be falsified without obvious forensic footprints: a signature may validate bytes that are not the final committed ledger, or an attacker with filesystem access can alter the target between write and sign.",
+  "code_anchors": [
+    "perform_audit(): write ledger → sign_file(...) → mutate metadata → rewrite (lines 237, 242, 244–245, 248 in provided version)"
+  ],
+  "steps_to_reproduce": [
+    "Static analysis only (no runtime required). Inspect perform_audit() flow where ledger is written, signed, then mutated/re-written.",
+    "When a testbed is available: run the PoE script (POE-20251021-0001.sh) to validate that any post-sign mutation or non-atomic commit causes signature verification to fail, or that a race can sign altered bytes."
+  ],
+  "environment": {
+    "host_os": "Ubuntu 22.04 (target)",
+    "python": "3.10+",
+    "gpg": "2.2+",
+    "note": "This finding is code-grounded; runtime validation pending."
+  },
+  "poe": "proofs/POE-20251021-0001.sh",
+  "detection_footprint": [
+    "gpg --verify fails if final on-disk bytes differ from those signed",
+    "mtime/ctime anomalies between ledger and .asc",
+    "Short window where inotify could observe write→sign sequence"
+  ],
+  "remediation_skeleton": "remediations/REM-20251021-0001.md",
+  "repro_rate": "unexecuted — spec only",
+  "status": "open",
+  "taxonomy_class": "crypto_failure",
+  "notes": "Detached signatures validate bytes by reference; they do not contain ledger data. Correctness hinges on writing, signing, verifying, and committing the exact same bytes atomically."
+}
